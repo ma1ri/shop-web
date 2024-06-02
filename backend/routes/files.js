@@ -27,11 +27,12 @@ const storage = multer.diskStorage({
   },
 });
 
+//create new user
 router.post("", multer({ storage }).single("image"), (req, res, next) => {
   const url = req.protocol + "://" + req.get("host");
   const post = new User({
     name: req.body.name,
-    imagePath: url + "/images/" + req.file.filename,
+    profilePicture: url + "/images/" + req.file.filename,
   });
   console.log(post);
   post.save();

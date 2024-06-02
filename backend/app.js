@@ -3,6 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 const fileRoutes = require("./routes/files");
+const categoryRoutes = require("./routes/categories");
+const brandRoutes = require("./routes/brands");
 const path = require("path");
 
 const app = express();
@@ -33,5 +35,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/posts", fileRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/brands", brandRoutes);
 
 module.exports = app;
