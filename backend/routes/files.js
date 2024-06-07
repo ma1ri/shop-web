@@ -32,7 +32,7 @@ router.post("", multer({ storage }).single("image"), (req, res, next) => {
   const url = req.protocol + "://" + req.get("host");
   const post = new User({
     name: req.body.name,
-    profilePicture: url + "/images/" + req.file.filename,
+    profilePicture: req.file ? url + "/images/" + req.file.filename : null,
   });
   console.log(post);
   post.save();
