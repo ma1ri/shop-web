@@ -11,6 +11,7 @@ const productSchema = mongoose.Schema(
     inStock: Boolean,
     onSale: Boolean,
     description: String,
+    imageIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Image" }],
   },
   { timestamps: true, versionKey: false }
 );

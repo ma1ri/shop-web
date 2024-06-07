@@ -1,11 +1,35 @@
 const express = require("express");
+const multer = require("multer");
 
 const Product = require("../models/product");
 const User = require("../models/user");
 const Category = require("../models/category");
 const Brand = require("../models/brand");
+const Image = require("../models/image");
 
 const router = express.Router();
+
+const MIME_TYPE_MAP = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/jpg": "jpg",
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const isValid = MIME_TYPE_MAP[file.mimetype];
+    let error = new Error("Invalid mime type");
+    if (isValid) {
+      error = null;
+    }
+    cb(error, "backend/images/products");
+  },
+  filename: (req, file, cb) => {
+    const name = file.originalname.toLowerCase().split(" ").join("-");
+    const ext = MIME_TYPE_MAP[file.mimetype];
+    cb(null, name + "-" + Date.now() + "." + ext);
+  },
+});
 
 //create new product
 router.post("", async (req, res, next) => {
@@ -43,8 +67,96 @@ router.post("", async (req, res, next) => {
   }
 });
 
+router.get("/search", async (req, res) => {
+  try {
+    const queryParams = {};
+    const perPage = parseInt(req.query.perPage) || 10; // Number of results per page
+    const currentPage = parseInt(req.query.currentPage) || 1; // Current page number
+
+    if (req.query.productName) {
+      queryParams.productName = {
+        $regex: req.query.productName,
+        $options: "i",
+      };
+    }
+    if (req.query.categoryId) {
+      queryParams.categoryId = req.query.categoryId;
+    }
+    if (req.query.brandId) {
+      queryParams.brandId = req.query.brandId;
+    }
+
+    if (req.query.onSale) {
+      queryParams.onSale = req.query.onSale === "true";
+    }
+
+    const products = await Product.find(queryParams)
+      .populate("userId")
+      .populate("categoryId")
+      .populate("brandId")
+      .populate("imageIds");
+    //   .limit(perPage)
+    //   .skip((currentPage - 1) * perPage)
+    //   .sort(sort);
+
+    res.status(200).json(products);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.post(
+  "/:productId/upload",
+  multer({ storage }).array("image", 10),
+  async (req, res, next) => {
+    try {
+      const { productId } = req.params;
+      const files = req.files;
+
+      if (!files || files.length === 0) {
+        return res.status(400).json({ error: "No images uploaded" });
+      }
+      const url = req.protocol + "://" + req.get("host");
+
+      // Save each image to the database and collect the image IDs
+      const imageIds = await Promise.all(
+        files.map(async (file) => {
+          const newImage = new Image({
+            imageLink: url + "/images/products/" + file.filename,
+          });
+          const savedImage = await newImage.save();
+          return savedImage._id;
+        })
+      );
+
+      const createdProduct = await Product.findByIdAndUpdate(
+        productId,
+        { $push: { imageIds: { $each: imageIds } } },
+        { new: true }
+      )
+        .populate("userId")
+        .populate("imageIds");
+
+      if (!createdProduct) {
+        return res.status(404).json({ error: "Product not found." });
+      }
+
+      res.status(201).json({
+        message: "created product",
+        data: {
+          product: createdProduct,
+        },
+      });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
+);
+
 router.get("", (req, res, next) => {
   Product.find()
+    .populate("userId")
+    .populate("imageIds")
     .then((documents) => {
       res.status(200).json({
         message: "successfully fetched data",
@@ -54,6 +166,27 @@ router.get("", (req, res, next) => {
       });
     })
     .catch();
+});
+
+router.get("/:productId", async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.productId)
+      .populate("userId")
+      .populate("imageIds");
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found." });
+    }
+
+    res.status(200).json({
+      message: "successfully fetched data",
+      data: {
+        products: product,
+      },
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 module.exports = router;
