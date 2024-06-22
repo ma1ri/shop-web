@@ -1,0 +1,119 @@
+<div class="card-container">
+  <mat-card class="profile-form-card">
+    <div class="profile-form-container">
+      <div class="profile-avatar-section">
+        <img
+          src="https://via.placeholder.com/150"
+          alt="Profile Photo"
+          class="profile-avatar"
+        />
+        <a href="#" class="change-photo-link">Change profile photo</a>
+      </div>
+
+      <div class="profile-info-section">
+        <form [formGroup]="signUpForm">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" required />
+            <mat-error *ngIf="signUpForm.get('name')?.hasError('required')">
+              გთხოვთ, შეავსოთ
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName" required />
+            <mat-error *ngIf="signUpForm.get('lastName')?.hasError('required')">
+              გთხოვთ, შეავსოთ
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input
+              matInput
+              formControlName="password"
+              type="password"
+              required
+            />
+            <mat-error *ngIf="signUpForm.get('password')?.hasError('required')">
+              გთხოვთ, შეავსოთ
+            </mat-error>
+            <mat-error
+              *ngIf="signUpForm.get('password')?.hasError('minlength')"
+            >
+              პაროლის სიგრძე უნდა იყოს მინიმუმ 6 სიმბოლო
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Phone</mat-label>
+            <input matInput formControlName="phone" required />
+            <mat-error *ngIf="signUpForm.get('phone')?.hasError('required')">
+              გთხოვთ, შეავსოთ
+            </mat-error>
+            <mat-error *ngIf="signUpForm.get('phone')?.hasError('pattern')">
+              ტელეფონის ნომერი უნდა იყოს შემდეგი ფორმატის: XXX-XX-XX-XX
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="mail" required />
+            <mat-error *ngIf="signUpForm.get('mail')?.hasError('required')">
+              გთხოვთ, შეავსოთ
+            </mat-error>
+            <mat-error *ngIf="signUpForm.get('mail')?.hasError('email')">
+              გთხოვთ, შეიყვანოთ ვალიდური ფორმატი
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Facebook Profile URL</mat-label>
+            <input matInput formControlName="facebook" />
+            <mat-error *ngIf="signUpForm.get('facebook')?.hasError('pattern')">
+              გთხოვთ შეიყვანოთ ვალიდური URL
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Instagram Profile URL</mat-label>
+            <input matInput formControlName="instagram" />
+            <mat-error *ngIf="signUpForm.get('instagram')?.hasError('pattern')">
+              გთხოვთ შეიყვანოთ ვალიდური URL
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button
+              *ngIf="signUpForm.disabled"
+              mat-raised-button
+              color="primary"
+              type="submit"
+              (click)="signUpForm.enable()"
+            >
+              edit
+            </button>
+            <button
+              *ngIf="signUpForm.enabled"
+              mat-raised-button
+              color="primary"
+              type="submit"
+              (click)="onSave()"
+            >
+              save
+            </button>
+            <button
+              *ngIf="signUpForm.enabled"
+              mat-raised-button
+              type="submit"
+              (click)="onCancel()"
+            >
+              cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </mat-card>
+</div>
