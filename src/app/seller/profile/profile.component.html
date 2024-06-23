@@ -1,1 +1,49 @@
-<p>profile works!</p>
+<div class="container">
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <div mat-card-avatar class="profile-image">
+        <img
+          [src]="user.profilePicture"
+          alt="Profile Picture"
+          class="profile-img"
+        />
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      <h2 class="profile-name">{{ user.name }}</h2>
+      <p
+        class="profile-details"
+        style="display: flex; align-items: center; justify-content: center"
+      >
+        <a
+          [href]="user.facebook"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="display: inline"
+        >
+          <mat-icon [inline]="true" aria-label="Facebook profile"
+            >facebook</mat-icon
+          >
+        </a>
+        <a [href]="user.instagram" target="_blank" rel="noopener noreferrer">
+          <i class="fab fa-instagram" aria-label="Instagram profile"></i>
+        </a>
+      </p>
+
+      <p class="profile-details">
+        <mat-icon aria-label="Phone number">phone</mat-icon> {{ user.phone }}
+      </p>
+
+      <p class="profile-details">
+        <mat-icon aria-label="Email address">email</mat-icon> {{ user.mail }}
+      </p>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div style="display: flex">
+  <app-product-card
+    *ngFor="let item of product"
+    [product]="item"
+  ></app-product-card>
+</div>
