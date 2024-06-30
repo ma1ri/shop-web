@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 
@@ -71,7 +71,8 @@ export class ProfileComponent implements OnInit {
   private queryParamsSubscription!: Subscription;
   constructor(
     private authService: AuthService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -82,5 +83,9 @@ export class ProfileComponent implements OnInit {
         this.isAuthenticated = this.authService.isAuthenticated();
       }
     );
+  }
+
+  navigateToMyProfile() {
+    this.router.navigate(['seller/my-profile']).then();
   }
 }

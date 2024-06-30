@@ -13,6 +13,12 @@
               class="profile-img"
             />
           </div>
+          <mat-icon
+            class="edit-icon"
+            aria-label="Edit profile"
+            (click)="navigateToMyProfile()"
+            >edit</mat-icon
+          >
         </mat-card-header>
         <mat-card-content>
           <h2 class="profile-name">{{ user.name }}</h2>
