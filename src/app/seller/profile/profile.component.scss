@@ -1,64 +1,86 @@
 .profile-card {
-    width: 250px;
-    padding: 20px;
-    text-align: center;
-    position: sticky;
-    z-index: 1000;
-    top: 20px;
-  }
-  
-  .profile-image {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid #e0e0e0;
-  }
-  
-  .profile-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .edit-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-  }
-  
-  .profile-name {
-    font-size: 24px;
-    font-weight: bold;
-    color: #1e88e5;
-    margin: 10px 0;
-  }
-  
-  .profile-details {
-    font-size: 14px;
-    color: #757575;
-    display: flex;
-    align-items: center;
-  }
-  
-  .profile-details mat-icon,
-  .profile-details i {
-    margin-right: 8px;  
-    font-size: 20px; 
-  }
-  
-  .profile-details a {
-    color: inherit;  
-    text-decoration: none;  
-  }
-  
-  .profile-details a:hover {
-    text-decoration: underline;  
-  }
-  
+  width: 250px;
+  padding: 20px;
+  text-align: center;
+  position: fixed;
+  top: 70px; 
+  z-index: 999;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #e0e0e0;
+}
+
+.profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.edit-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.profile-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1e88e5;
+  margin: 10px 0;
+}
+
+.profile-details {
+  font-size: 14px;
+  color: #757575;
+  display: flex;
+  align-items: center;
+}
+
+.profile-details mat-icon,
+.profile-details i {
+  margin-right: 8px;  
+  font-size: 20px; 
+}
+
+.profile-details a {
+  color: inherit;  
+  text-decoration: none;  
+}
+
+.profile-details a:hover {
+  text-decoration: underline;  
+}
+
+.layout-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 80%;
+  position: relative;
+}
+
+.profile-container {
+  flex: 0 0 250px; 
+  margin-right: 20px;
+}
+
+.products-container {
+  flex: 1;
+}
+
+.scrollable-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px; /* Padding for a better layout */
+}
 
 
 
- 

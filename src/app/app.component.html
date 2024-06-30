@@ -1,1 +1,23 @@
-<router-outlet></router-outlet>
+<div style="height: 100%">
+  <mat-toolbar color="primary" class="sticky-toolbar">
+    <span>
+      <a routerLink="/">Shop Web</a>
+    </span>
+    <span class="spacer"></span>
+    <ul>
+      <li>
+        <a mat-button routerLink="/auth/login" routerLinkActive="mat-accent"
+          >Login</a
+        >
+      </li>
+      <li>
+        <a mat-button routerLink="/auth/signup" routerLinkActive="mat-accent"
+          >Signup</a
+        >
+      </li>
+    </ul>
+  </mat-toolbar>
+  <div style="display: flex; justify-content: center">
+    <router-outlet></router-outlet>
+  </div>
+</div>

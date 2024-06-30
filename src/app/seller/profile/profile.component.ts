@@ -26,7 +26,7 @@ export class ProfileComponent implements OnInit {
       name: 'loreal paris hair mask, loreal paris hair mask sadasd',
       price: 100,
       image:
-        'https://static.vecteezy.com/vite/assets/photo-masthead-375-BoK_p8LG.webp',
+        'https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg',
       description: '',
     },
     {
