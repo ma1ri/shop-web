@@ -1,0 +1,109 @@
+<div
+  style="width: 100%; display: flex; justify-content: center; padding-top: 70px"
+>
+  <div class="layout-container">
+    <div class="profile-container">
+      <mat-card class="profile-card">
+        <mat-card-header>
+          <div mat-card-avatar class="profile-image">
+            <img
+              [src]="user.profilePicture"
+              alt="Profile Picture"
+              class="profile-img"
+            />
+          </div>
+          <mat-icon
+            class="edit-icon"
+            aria-label="Edit profile"
+            (click)="navigateToMyProfile()"
+            >edit</mat-icon
+          >
+        </mat-card-header>
+        <mat-card-content>
+          <h2 class="profile-name">{{ user.name }}</h2>
+          <p class="profile-details">
+            <a
+              [href]="user.facebook"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="display: inline"
+            >
+              <mat-icon [inline]="true" aria-label="Facebook profile"
+                >facebook</mat-icon
+              >
+            </a>
+            <a
+              [href]="user.instagram"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i class="fab fa-instagram" aria-label="Instagram profile"></i>
+            </a>
+          </p>
+          <p class="profile-details">
+            <mat-icon aria-label="Phone number">phone</mat-icon>
+            {{ user.phone }}
+          </p>
+          <p class="profile-details">
+            <mat-icon aria-label="Email address">email</mat-icon>
+            {{ user.mail }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div style="display: flex; flex-direction: column" class="product-details">
+      <div class="image-previewer">
+        <div class="main-image">
+          <img [src]="selectedImage" alt="Selected Image" />
+          <button mat-icon-button class="delete-button" (click)="deleteImage()">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="thumbnails">
+          <img
+            *ngFor="let image of images; let i = index"
+            [src]="image"
+            (click)="selectImage(image)"
+            [class.selected]="image === selectedImage"
+            alt="Thumbnail"
+          />
+          <button mat-icon-button class="add-button" (click)="addImage()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top: 10px; width: 500px">
+        <h1 class="product-name">{{ product.Product_name }}</h1>
+        <p class="category">
+          <strong>Category:</strong> {{ product.category }}
+        </p>
+        <p class="brand"><strong>Brand:</strong> {{ product.brand }}</p>
+
+        <p class="price">
+          <span *ngIf="product.on_sale" class="old-price"
+            >${{ product.price.toFixed(2) }}</span
+          >
+          <span class="new-price">${{ product.new_Price.toFixed(2) }}</span>
+        </p>
+
+        <p
+          class="stock-status"
+          [ngClass]="{
+            'in-stock': product.in_stock,
+            'out-of-stock': !product.in_stock
+          }"
+        >
+          <strong>Status:</strong>
+          {{ product.in_stock ? "In Stock" : "Out of Stock" }}
+        </p>
+
+        <p class="description">
+          <strong>Description:</strong> {{ product.description }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
