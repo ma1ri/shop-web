@@ -41,6 +41,37 @@ router.post("", multer({ storage }).single("image"), (req, res, next) => {
   });
 });
 
+router.put("/:id", multer({ storage }).single("image"), (req, res, next) => {
+  let profilePicture = req.body.profilePicture;
+
+  // If a new image is uploaded, update the profile picture URL
+  if (req.file) {
+    const url = req.protocol + "://" + req.get("host");
+    profilePicture = url + "/images/" + req.file.filename;
+  }
+
+  const updatedUser = {
+    ...req.body,
+    profilePicture: profilePicture,
+  };
+
+  // Find the user by ID and update their details
+  User.updateOne({ _id: req.params.id }, updatedUser)
+    .then((result) => {
+      if (result.matchedCount > 0) {
+        res.status(200).json({ message: "Update successful!" });
+      } else {
+        res.status(404).json({ message: "User not found!" });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Couldn't update user!",
+        error: error,
+      });
+    });
+});
+
 router.get("", (req, res, next) => {
   //   User.find(() => {});
   User.find()
