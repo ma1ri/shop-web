@@ -105,5 +105,99 @@
         </p>
       </div>
     </div>
+
+    <div style="display: flex; flex-direction: column" class="product-details">
+      <div class="image-previewer">
+        <div class="main-image main-image-upload">
+          <button mat-icon-button (click)="addImage()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top: 10px; width: 500px">
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="fill">
+            <mat-label>Product Name</mat-label>
+            <input matInput formControlName="Product_name" />
+            <mat-error
+              *ngIf="productForm.get('Product_name')?.hasError('required')"
+            >
+              Product name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Category</mat-label>
+            <mat-select formControlName="category">
+              <mat-option
+                *ngFor="let category of categories"
+                [value]="category"
+              >
+                {{ category }}
+              </mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="productForm.get('category')?.hasError('required')"
+            >
+              Category is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Brand</mat-label>
+            <mat-select formControlName="brand">
+              <mat-option *ngFor="let brand of brands" [value]="brand">
+                {{ brand }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="productForm.get('brand')?.hasError('required')">
+              Brand is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Price</mat-label>
+            <input matInput type="number" formControlName="price" />
+            <mat-error *ngIf="productForm.get('price')?.hasError('required')">
+              Price is required
+            </mat-error>
+            <mat-error *ngIf="productForm.get('price')?.hasError('min')">
+              Price must be a positive number
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>New Price</mat-label>
+            <input matInput type="number" formControlName="new_Price" />
+            <mat-error *ngIf="productForm.get('new_Price')?.hasError('min')">
+              New price must be a positive number
+            </mat-error>
+          </mat-form-field>
+
+          <mat-checkbox formControlName="in_stock">In Stock</mat-checkbox>
+          <mat-checkbox formControlName="on_sale">On Sale</mat-checkbox>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+            <mat-error
+              *ngIf="productForm.get('description')?.hasError('maxlength')"
+            >
+              Description cannot exceed 500 characters
+            </mat-error>
+          </mat-form-field>
+
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="productForm.invalid"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>

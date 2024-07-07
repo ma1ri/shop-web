@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,6 +8,10 @@ import { Router } from '@angular/router';
   styleUrls: ['./product-details.component.scss'],
 })
 export class ProductDetailsComponent implements OnInit {
+  productForm!: FormGroup;
+
+  categories: string[] = ['Skin Care', 'Hair Care', 'Makeup', 'Fragrance'];
+  brands: string[] = ['Vivi et Margot', 'Loreal', 'Dove', 'Nivea'];
   images: string[] = [
     'https://static.vecteezy.com/vite/assets/photo-masthead-375-BoK_p8LG.webp',
     'https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg',
@@ -41,7 +46,24 @@ export class ProductDetailsComponent implements OnInit {
 
   constructor(private router: Router) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.productForm = new FormGroup({
+      Product_name: new FormControl('', Validators.required),
+      category: new FormControl('', Validators.required),
+      brand: new FormControl('', Validators.required),
+      price: new FormControl('', [Validators.required, Validators.min(0)]),
+      new_Price: new FormControl('', Validators.min(0)),
+      in_stock: new FormControl(false),
+      on_sale: new FormControl(false),
+      description: new FormControl('', Validators.maxLength(500)),
+    });
+  }
+
+  onSubmit(): void {
+    if (this.productForm.valid) {
+      console.log(this.productForm.value);
+    }
+  }
 
   selectImage(image: string): void {
     this.selectedImage = image;
