@@ -1,0 +1,88 @@
+<div
+  style="width: 100%; display: flex; justify-content: center; padding-top: 70px"
+>
+  <div class="layout-container">
+    <div class="profile-container">
+      <mat-card class="profile-card">
+        <div class="filters">
+          <mat-form-field appearance="fill">
+            <mat-label>Category</mat-label>
+            <mat-select
+              [(ngModel)]="filters.category"
+              (selectionChange)="applyFilters()"
+            >
+              <mat-option
+                *ngFor="let category of categories"
+                [value]="category"
+              >
+                {{ category }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Brand</mat-label>
+            <mat-select
+              [(ngModel)]="filters.brand"
+              (selectionChange)="applyFilters()"
+            >
+              <mat-option *ngFor="let brand of brands" [value]="brand">
+                {{ brand }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="price-range">
+            <mat-form-field appearance="fill">
+              <mat-label>Min Price</mat-label>
+              <input
+                matInput
+                type="number"
+                [(ngModel)]="filters.minPrice"
+                min="0"
+                max="1000"
+                step="10"
+                (input)="applyFilters()"
+                placeholder="Min Price"
+              />
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Max Price</mat-label>
+              <input
+                matInput
+                type="number"
+                [(ngModel)]="filters.maxPrice"
+                min="0"
+                max="1000"
+                step="10"
+                (input)="applyFilters()"
+                placeholder="Max Price"
+              />
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="fill">
+            <mat-label>User</mat-label>
+            <input
+              matInput
+              [(ngModel)]="filters.user"
+              (input)="applyFilters()"
+              placeholder="User ID"
+            />
+          </mat-form-field>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Product Cards Container -->
+    <div class="products-container">
+      <div class="scrollable-content">
+        <app-product-card
+          *ngFor="let item of products"
+          [product]="item"
+        ></app-product-card>
+      </div>
+    </div>
+  </div>
+</div>

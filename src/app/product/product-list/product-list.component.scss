@@ -1,0 +1,132 @@
+.price-range {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .price-range mat-label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .main-container {
+    width: 80%;
+    gap: 10px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .filters-container {
+    position: relative;
+    width: 200px;
+  }
+  
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .product-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .product-card {
+    border: 1px solid #e0e0e0;
+    padding: 16px;
+    border-radius: 8px;
+    width: 200px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+
+  .profile-card {
+    width: 270px;
+    padding: 20px;
+    text-align: center;
+    position: fixed;
+    top: 70px; 
+    z-index: 999;
+  }
+  
+  .profile-image {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #e0e0e0;
+  }
+  
+  .profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .edit-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+  }
+  
+  .profile-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1e88e5;
+    margin: 10px 0;
+  }
+  
+  .profile-details {
+    font-size: 14px;
+    color: #757575;
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-details mat-icon,
+  .profile-details i {
+    margin-right: 8px;  
+    font-size: 20px; 
+  }
+  
+  .profile-details a {
+    color: inherit;  
+    text-decoration: none;  
+  }
+  
+  .profile-details a:hover {
+    text-decoration: underline;  
+  }
+  
+  .layout-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    width: 80%;
+    position: relative;
+  }
+  
+  .profile-container {
+    flex: 0 0 250px; 
+    margin-right: 20px;
+  }
+  
+  .products-container {
+    flex: 1;
+  }
+  
+  .scrollable-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px; 
+  }
+  
+
+
+ 
