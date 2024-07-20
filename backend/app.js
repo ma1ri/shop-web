@@ -2,7 +2,7 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const mongoose = require("mongoose");
 
-const fileRoutes = require("./routes/files");
+const userRoutes = require("./routes/users");
 const categoryRoutes = require("./routes/categories");
 const brandRoutes = require("./routes/brands");
 const productRoutes = require("./routes/products");
@@ -36,7 +36,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/posts", fileRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/brands", brandRoutes);
 app.use("/api/products", productRoutes);
