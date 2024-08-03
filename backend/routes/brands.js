@@ -19,10 +19,7 @@ router.get("", (req, res, next) => {
   Brand.find()
     .then((documents) => {
       res.status(200).json({
-        message: "successfully fetched data",
-        data: {
-          brands: documents,
-        },
+        brands: documents,
       });
     })
     .catch();

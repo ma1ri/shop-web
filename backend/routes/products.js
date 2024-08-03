@@ -89,6 +89,15 @@ router.get("/search", async (req, res) => {
     if (req.query.onSale) {
       queryParams.onSale = req.query.onSale === "true";
     }
+    if (req.query.minPrice || req.query.maxPrice) {
+      queryParams.price = {};
+      if (req.query.minPrice) {
+        queryParams.price.$gte = parseFloat(req.query.minPrice); //price >= minPrice
+      }
+      if (req.query.maxPrice) {
+        queryParams.price.$lte = parseFloat(req.query.maxPrice); // price <= maxPrice
+      }
+    }
 
     const products = await Product.find(queryParams)
       .populate("userId")
@@ -142,10 +151,7 @@ router.post(
       }
 
       res.status(201).json({
-        message: "created product",
-        data: {
-          product: createdProduct,
-        },
+        product: createdProduct,
       });
     } catch (e) {
       res.status(500).json({ error: e.message });
@@ -159,10 +165,7 @@ router.get("", (req, res, next) => {
     .populate("imageIds")
     .then((documents) => {
       res.status(200).json({
-        message: "successfully fetched data",
-        data: {
-          products: documents,
-        },
+        products: documents,
       });
     })
     .catch();
@@ -179,10 +182,7 @@ router.get("/:productId", async (req, res, next) => {
     }
 
     res.status(200).json({
-      message: "successfully fetched data",
-      data: {
-        products: product,
-      },
+      products: product,
     });
   } catch (e) {
     res.status(500).json({ error: e.message });

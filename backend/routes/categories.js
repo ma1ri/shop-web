@@ -19,10 +19,7 @@ router.get("", (req, res, next) => {
   Category.find()
     .then((documents) => {
       res.status(200).json({
-        message: "successfully fetched data",
-        data: {
-          categories: documents,
-        },
+        categories: documents,
       });
     })
     .catch();
@@ -32,10 +29,7 @@ router.get("/:id", (req, res, next) => {
   Category.findById(req.params.id)
     .then((documents) => {
       res.status(200).json({
-        message: "successfully fetched data",
-        data: {
-          categories: documents,
-        },
+        categories: documents,
       });
     })
     .catch();

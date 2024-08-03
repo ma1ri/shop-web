@@ -1,11 +1,11 @@
 <div
   style="width: 100%; display: flex; justify-content: center; padding-top: 70px"
 >
-  <div class="layout-container">
-    <div class="profile-container">
-      <mat-card class="profile-card">
-        <div class="filters">
-          <mat-form-field appearance="fill">
+  <div class="container">
+    <div class="filters-container">
+      <mat-card class="filters-card">
+        <div class="filter-fields">
+          <mat-form-field appearance="outline" class="filter-field">
             <mat-label>Category</mat-label>
             <mat-select
               [(ngModel)]="filters.category"
@@ -13,75 +13,72 @@
             >
               <mat-option
                 *ngFor="let category of categories"
-                [value]="category"
+                [value]="category._id"
               >
-                {{ category }}
+                {{ category.category }}
               </mat-option>
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field appearance="fill">
+          <mat-form-field appearance="outline" class="filter-field">
             <mat-label>Brand</mat-label>
             <mat-select
               [(ngModel)]="filters.brand"
               (selectionChange)="applyFilters()"
             >
-              <mat-option *ngFor="let brand of brands" [value]="brand">
-                {{ brand }}
+              <mat-option *ngFor="let brand of brands" [value]="brand._id">
+                {{ brand.brand }}
               </mat-option>
             </mat-select>
           </mat-form-field>
 
-          <div class="price-range">
-            <mat-form-field appearance="fill">
-              <mat-label>Min Price</mat-label>
-              <input
-                matInput
-                type="number"
-                [(ngModel)]="filters.minPrice"
-                min="0"
-                max="1000"
-                step="10"
-                (input)="applyFilters()"
-                placeholder="Min Price"
-              />
-            </mat-form-field>
-
-            <mat-form-field appearance="fill">
-              <mat-label>Max Price</mat-label>
-              <input
-                matInput
-                type="number"
-                [(ngModel)]="filters.maxPrice"
-                min="0"
-                max="1000"
-                step="10"
-                (input)="applyFilters()"
-                placeholder="Max Price"
-              />
-            </mat-form-field>
-          </div>
-
-          <mat-form-field appearance="fill">
-            <mat-label>User</mat-label>
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Min Price</mat-label>
             <input
               matInput
-              [(ngModel)]="filters.user"
+              type="number"
+              [(ngModel)]="filters.minPrice"
+              min="0"
+              max="1000"
+              step="10"
               (input)="applyFilters()"
-              placeholder="User ID"
+              placeholder="Min Price"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Max Price</mat-label>
+            <input
+              matInput
+              type="number"
+              [(ngModel)]="filters.maxPrice"
+              min="0"
+              max="1000"
+              step="10"
+              (input)="applyFilters()"
+              placeholder="Max Price"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Product</mat-label>
+            <input
+              matInput
+              [(ngModel)]="filters.productName"
+              (input)="applyFilters()"
+              placeholder="Product Name"
             />
           </mat-form-field>
         </div>
       </mat-card>
     </div>
 
-    <!-- Product Cards Container -->
-    <div class="products-container">
-      <div class="scrollable-content">
-        <app-product-card
-          *ngFor="let item of products"
-          [product]="item"
-        ></app-product-card>
+    <div class="product-list">
+      <div *ngIf="products.length === 0" class="no-products">
+        <p>No products found</p>
+      </div>
+      <div *ngFor="let product of products" class="product-card">
+        <app-product-card [product]="product"></app-product-card>
       </div>
     </div>
   </div>
