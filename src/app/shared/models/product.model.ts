@@ -4,6 +4,7 @@ import { Image } from './image.model';
 import { User } from './user.model';
 
 export interface Product {
+  _id: string;
   productName: string;
   userId: User;
   categoryId: Category;

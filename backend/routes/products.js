@@ -56,12 +56,54 @@ router.post("", async (req, res, next) => {
     //if everything is ok, save product
     const product = new Product(req.body);
     const createdProduct = await product.save();
-    res.status(201).json({
-      message: "created product",
-      data: {
-        product: createdProduct,
-      },
-    });
+    res.status(201).json(product);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+//update product
+router.put("/:id", async (req, res, next) => {
+  try {
+    const productId = req.params.id;
+    const { userId, categoryId, brandId } = req.body;
+
+    // Check if product exists
+    const productExists = await Product.exists({ _id: productId });
+    if (!productExists) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Check if userId exists
+    const userExists = await User.exists({ _id: userId });
+    if (!userExists) {
+      return res.status(400).json({ error: "Invalid userId" });
+    }
+
+    // Check if categoryId exists
+    const categoryExists = await Category.exists({ _id: categoryId });
+    if (!categoryExists) {
+      return res.status(400).json({ error: "Invalid categoryId" });
+    }
+
+    // Check if brandId exists
+    const brandExists = await Brand.exists({ _id: brandId });
+    if (!brandExists) {
+      return res.status(400).json({ error: "Invalid brandId" });
+    }
+
+    // Update the product
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      req.body,
+      { new: true }
+    )
+      .populate("userId")
+      .populate("categoryId")
+      .populate("brandId")
+      .populate("imageIds");
+
+    res.status(200).json(updatedProduct);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -116,7 +158,7 @@ router.get("/search", async (req, res) => {
 
 router.post(
   "/:productId/upload",
-  multer({ storage }).array("image", 10),
+  multer({ storage }).array("image", 2),
   async (req, res, next) => {
     try {
       const { productId } = req.params;
@@ -144,6 +186,8 @@ router.post(
         { new: true }
       )
         .populate("userId")
+        .populate("categoryId")
+        .populate("brandId")
         .populate("imageIds");
 
       if (!createdProduct) {
@@ -175,15 +219,15 @@ router.get("/:productId", async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.productId)
       .populate("userId")
+      .populate("categoryId")
+      .populate("brandId")
       .populate("imageIds");
 
     if (!product) {
       return res.status(404).json({ error: "Product not found." });
     }
 
-    res.status(200).json({
-      products: product,
-    });
+    res.status(200).json(product);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

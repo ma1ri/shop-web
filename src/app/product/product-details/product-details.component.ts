@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Brand } from 'src/app/shared/models/brand.model';
+import { Category } from 'src/app/shared/models/category.model';
+import { ProductsService } from '../product.service';
+import { Product } from 'src/app/shared/models/product.model';
+import { User } from 'src/app/shared/models/user.model';
 
 @Component({
   selector: 'app-product-details',
@@ -9,60 +14,66 @@ import { Router } from '@angular/router';
 })
 export class ProductDetailsComponent implements OnInit {
   productForm!: FormGroup;
+  productId!: string;
+  categories: Category[] = [];
+  brands: Brand[] = [];
+  product!: Product | undefined;
+  editMode: boolean = false;
+  user!: User;
 
-  categories: string[] = ['Skin Care', 'Hair Care', 'Makeup', 'Fragrance'];
-  brands: string[] = ['Vivi et Margot', 'Loreal', 'Dove', 'Nivea'];
-  images: string[] = [
-    'https://static.vecteezy.com/vite/assets/photo-masthead-375-BoK_p8LG.webp',
-    'https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg',
-    'https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg',
-  ];
+  selectedImage!: string;
 
-  user = {
-    name: 'oplop',
-    gender: 'female',
-    location: 'Georgia',
-    profilePicture:
-      'https://static.vecteezy.com/vite/assets/photo-masthead-375-BoK_p8LG.webp',
-    facebook: 'https://facebook.com/oplop',
-    instagram: 'https://instagram.com/oplop',
-    phone: 'XXX-XX-XX-XX',
-    mail: 'oplop@example.com',
-  };
-
-  product = {
-    Product_name: 'Olive Oil Soap',
-    category: 'Skin Care',
-    brand: 'Vivi et Margot',
-    price: 26.0,
-    new_Price: 20.0,
-    in_stock: true,
-    on_sale: true,
-    description:
-      'This olive oil soap is a luxurious blend of natural ingredients that nourishes and hydrates your skin. Perfect for daily use, it leaves your skin feeling soft and refreshed.',
-  };
-
-  selectedImage: string = this.images[0];
-
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private productsService: ProductsService
+  ) {}
 
   ngOnInit(): void {
-    this.productForm = new FormGroup({
-      Product_name: new FormControl('', Validators.required),
-      category: new FormControl('', Validators.required),
-      brand: new FormControl('', Validators.required),
-      price: new FormControl('', [Validators.required, Validators.min(0)]),
-      new_Price: new FormControl('', Validators.min(0)),
-      in_stock: new FormControl(false),
-      on_sale: new FormControl(false),
-      description: new FormControl('', Validators.maxLength(500)),
+    this.initForm();
+    this.route.queryParams.subscribe((params) => {
+      this.fetchFillterFields();
+      this.productId = params['productId'];
+      console.log(this.productId);
+      if (this.productId) {
+        this.productsService.getProductById(this.productId).subscribe((res) => {
+          this.product = res;
+          this.user = this.product.userId;
+          this.selectedImage = this.product?.imageIds?.length
+            ? this.product.imageIds[0].imageLink
+            : '';
+        });
+      }
     });
   }
 
   onSubmit(): void {
-    if (this.productForm.valid) {
-      console.log(this.productForm.value);
+    console.log(this.productForm.value);
+    if (!this.productForm.valid) {
+      return;
     }
+
+    const params = {
+      ...this.productForm.value,
+      userId: this.product?.userId?._id, // TODO: დაამატე დალოგინებული იუზერის id
+    };
+    if (!this.productId) {
+      this.productsService.createProduct(params).subscribe((res) => {
+        this.product = res;
+        this.editMode = false;
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { productId: this.product._id },
+        });
+      });
+      return;
+    }
+    this.productsService
+      .updateProduct(this.productId, params)
+      .subscribe((res) => {
+        this.product = res;
+        this.editMode = false;
+      });
   }
 
   selectImage(image: string): void {
@@ -75,5 +86,43 @@ export class ProductDetailsComponent implements OnInit {
 
   navigateToMyProfile() {
     this.router.navigate(['seller/my-profile']).then();
+  }
+
+  onEdit() {
+    this.editMode = true;
+    const paramsForForm = {
+      productName: this.product?.productName,
+      categoryId: this.product?.categoryId._id,
+      brandId: this.product?.brandId._id,
+      price: this.product?.price,
+      newPrice: this.product?.newPrice,
+      inStock: this.product?.inStock,
+      onSale: this.product?.onSale,
+      description: this.product?.description,
+    };
+    this.productForm.patchValue(paramsForForm);
+  }
+
+  fetchFillterFields() {
+    this.productsService.getBrands().subscribe((res) => {
+      this.brands = res?.brands;
+    });
+
+    this.productsService.getCategories().subscribe((res) => {
+      this.categories = res?.categories;
+    });
+  }
+
+  private initForm() {
+    this.productForm = new FormGroup({
+      productName: new FormControl('', Validators.required),
+      categoryId: new FormControl('', Validators.required),
+      brandId: new FormControl('', Validators.required),
+      price: new FormControl('', [Validators.required, Validators.min(0)]),
+      newPrice: new FormControl('', Validators.min(0)),
+      inStock: new FormControl(false),
+      onSale: new FormControl(false),
+      description: new FormControl('', Validators.maxLength(500)),
+    });
   }
 }

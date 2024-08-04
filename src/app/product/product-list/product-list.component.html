@@ -77,7 +77,11 @@
       <div *ngIf="products.length === 0" class="no-products">
         <p>No products found</p>
       </div>
-      <div *ngFor="let product of products" class="product-card">
+      <div
+        *ngFor="let product of products"
+        class="product-card"
+        (click)="navigateToProduct(product)"
+      >
         <app-product-card [product]="product"></app-product-card>
       </div>
     </div>

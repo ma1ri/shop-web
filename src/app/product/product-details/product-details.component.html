@@ -2,7 +2,7 @@
   style="width: 100%; display: flex; justify-content: center; padding-top: 70px"
 >
   <div class="layout-container">
-    <div class="profile-container">
+    <div class="profile-container" *ngIf="user">
       <mat-card class="profile-card">
         <mat-card-header>
           <div mat-card-avatar class="profile-image">
@@ -20,9 +20,10 @@
           >
         </mat-card-header>
         <mat-card-content>
-          <h2 class="profile-name">{{ user.name }}</h2>
+          <h3 class="profile-name">{{ user.name }}</h3>
           <p class="profile-details">
             <a
+              *ngIf="user.facebook"
               [href]="user.facebook"
               target="_blank"
               rel="noopener noreferrer"
@@ -33,6 +34,7 @@
               >
             </a>
             <a
+              *ngIf="user.instagram"
               [href]="user.instagram"
               target="_blank"
               rel="noopener noreferrer"
@@ -40,11 +42,11 @@
               <i class="fab fa-instagram" aria-label="Instagram profile"></i>
             </a>
           </p>
-          <p class="profile-details">
+          <p class="profile-details" *ngIf="user.phone">
             <mat-icon aria-label="Phone number">phone</mat-icon>
             {{ user.phone }}
           </p>
-          <p class="profile-details">
+          <p class="profile-details" *ngIf="user.mail">
             <mat-icon aria-label="Email address">email</mat-icon>
             {{ user.mail }}
           </p>
@@ -54,19 +56,29 @@
 
     <div style="display: flex; flex-direction: column" class="product-details">
       <div class="image-previewer">
-        <div class="main-image">
+        <div
+          class="main-image"
+          *ngIf="product?.imageIds?.length; else noPhotos"
+        >
           <img [src]="selectedImage" alt="Selected Image" />
           <button mat-icon-button class="delete-button" (click)="deleteImage()">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
+        <ng-template #noPhotos>
+          <div class="main-image main-image-upload">
+            <button mat-icon-button (click)="addImage()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </ng-template>
 
-        <div class="thumbnails">
+        <div class="thumbnails" *ngIf="product?.imageIds?.length">
           <img
-            *ngFor="let image of images; let i = index"
-            [src]="image"
-            (click)="selectImage(image)"
-            [class.selected]="image === selectedImage"
+            *ngFor="let image of product?.imageIds; let i = index"
+            [src]="image.imageLink"
+            (click)="selectImage(image.imageLink)"
+            [class.selected]="image.imageLink === selectedImage"
             alt="Thumbnail"
           />
           <button mat-icon-button class="add-button" (click)="addImage()">
@@ -75,53 +87,60 @@
         </div>
       </div>
 
-      <div style="margin-top: 10px; width: 500px">
-        <h1 class="product-name">{{ product.Product_name }}</h1>
+      <div style="margin-top: 10px; width: 500px" *ngIf="product && !editMode">
+        <h1 class="product-name">{{ product.productName }}</h1>
         <p class="category">
-          <strong>Category:</strong> {{ product.category }}
+          <strong>Category:</strong> {{ product.categoryId.category }}
         </p>
-        <p class="brand"><strong>Brand:</strong> {{ product.brand }}</p>
+        <p class="brand"><strong>Brand:</strong> {{ product.brandId.brand }}</p>
 
         <p class="price">
-          <span *ngIf="product.on_sale" class="old-price"
-            >${{ product.price.toFixed(2) }}</span
+          <span *ngIf="product.onSale" class="old-price"
+            >{{ product.price.toFixed(2) }} ლარი</span
           >
-          <span class="new-price">${{ product.new_Price.toFixed(2) }}</span>
+          <span class="new-price"
+            >{{
+              product.newPrice?.toFixed(2) || product.price.toFixed(2)
+            }}
+            ლარი</span
+          >
         </p>
 
         <p
           class="stock-status"
           [ngClass]="{
-            'in-stock': product.in_stock,
-            'out-of-stock': !product.in_stock
+            'in-stock': product.inStock,
+            'out-of-stock': !product.inStock
           }"
         >
           <strong>Status:</strong>
-          {{ product.in_stock ? "In Stock" : "Out of Stock" }}
+          {{ product.inStock ? "In Stock" : "Out of Stock" }}
         </p>
 
         <p class="description">
           <strong>Description:</strong> {{ product.description }}
         </p>
-      </div>
-    </div>
-
-    <div style="display: flex; flex-direction: column" class="product-details">
-      <div class="image-previewer">
-        <div class="main-image main-image-upload">
-          <button mat-icon-button (click)="addImage()">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          (click)="onEdit()"
+        >
+          edit
+        </button>
       </div>
 
-      <div style="margin-top: 10px; width: 500px">
+      <!-- edit product fields  -->
+      <div
+        style="margin-top: 10px; width: 500px"
+        *ngIf="editMode || !this.productId"
+      >
         <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
           <mat-form-field appearance="fill">
             <mat-label>Product Name</mat-label>
-            <input matInput formControlName="Product_name" />
+            <input matInput formControlName="productName" />
             <mat-error
-              *ngIf="productForm.get('Product_name')?.hasError('required')"
+              *ngIf="productForm.get('productName')?.hasError('required')"
             >
               Product name is required
             </mat-error>
@@ -129,16 +148,16 @@
 
           <mat-form-field appearance="fill">
             <mat-label>Category</mat-label>
-            <mat-select formControlName="category">
+            <mat-select formControlName="categoryId">
               <mat-option
                 *ngFor="let category of categories"
-                [value]="category"
+                [value]="category._id"
               >
-                {{ category }}
+                {{ category.category }}
               </mat-option>
             </mat-select>
             <mat-error
-              *ngIf="productForm.get('category')?.hasError('required')"
+              *ngIf="productForm.get('categoryId')?.hasError('required')"
             >
               Category is required
             </mat-error>
@@ -146,12 +165,12 @@
 
           <mat-form-field appearance="fill">
             <mat-label>Brand</mat-label>
-            <mat-select formControlName="brand">
-              <mat-option *ngFor="let brand of brands" [value]="brand">
-                {{ brand }}
+            <mat-select formControlName="brandId">
+              <mat-option *ngFor="let brand of brands" [value]="brand._id">
+                {{ brand.brand }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="productForm.get('brand')?.hasError('required')">
+            <mat-error *ngIf="productForm.get('brandId')?.hasError('required')">
               Brand is required
             </mat-error>
           </mat-form-field>
@@ -169,14 +188,14 @@
 
           <mat-form-field appearance="fill">
             <mat-label>New Price</mat-label>
-            <input matInput type="number" formControlName="new_Price" />
-            <mat-error *ngIf="productForm.get('new_Price')?.hasError('min')">
+            <input matInput type="number" formControlName="newPrice" />
+            <mat-error *ngIf="productForm.get('newPrice')?.hasError('min')">
               New price must be a positive number
             </mat-error>
           </mat-form-field>
 
-          <mat-checkbox formControlName="in_stock">In Stock</mat-checkbox>
-          <mat-checkbox formControlName="on_sale">On Sale</mat-checkbox>
+          <mat-checkbox formControlName="inStock">In Stock</mat-checkbox>
+          <mat-checkbox formControlName="onSale">On Sale</mat-checkbox>
 
           <mat-form-field appearance="fill">
             <mat-label>Description</mat-label>
@@ -189,12 +208,17 @@
           </mat-form-field>
 
           <button
+            style="margin-right: 4px"
             mat-raised-button
             color="primary"
             type="submit"
             [disabled]="productForm.invalid"
           >
             Submit
+          </button>
+
+          <button mat-raised-button color="accent" (click)="editMode = false">
+            Cancel
           </button>
         </form>
       </div>

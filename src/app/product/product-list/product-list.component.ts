@@ -1,12 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { Brand, BrandResponse } from 'src/app/shared/models/brand.model';
-import {
-  Category,
-  CategoryResponse,
-} from 'src/app/shared/models/category.model';
+import { Brand } from 'src/app/shared/models/brand.model';
+import { Category } from 'src/app/shared/models/category.model';
 import { Product } from 'src/app/shared/models/product.model';
-import { environment } from 'src/environments/environment';
+import { ProductsService } from '../product.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-list',
@@ -27,7 +24,10 @@ export class ProductListComponent {
 
   private timeoutId: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private router: Router,
+    private productsService: ProductsService
+  ) {}
 
   ngOnInit(): void {
     this.fetchProducts();
@@ -48,23 +48,25 @@ export class ProductListComponent {
     this.timeoutId = setTimeout(() => this.fetchProducts(params), 300);
   }
 
+  navigateToProduct(product: Product) {
+    this.router.navigate(['/product/product-details'], {
+      queryParams: { productId: product._id },
+    });
+  }
+
   fetchProducts(params = {}): void {
-    let url = environment.url + 'api/products/search';
-    this.http.get<Product[]>(url, { params }).subscribe((data) => {
+    this.productsService.fetchProducts(params).subscribe((data) => {
       this.products = data;
     });
   }
 
   fetchFillterFields() {
-    this.http
-      .get<BrandResponse>(environment.url + 'api/brands')
-      .subscribe((res) => {
-        this.brands = res?.brands;
-      });
-    this.http
-      .get<CategoryResponse>(environment.url + 'api/categories')
-      .subscribe((res) => {
-        this.categories = res?.categories;
-      });
+    this.productsService.getBrands().subscribe((res) => {
+      this.brands = res?.brands;
+    });
+
+    this.productsService.getCategories().subscribe((res) => {
+      this.categories = res?.categories;
+    });
   }
 }
