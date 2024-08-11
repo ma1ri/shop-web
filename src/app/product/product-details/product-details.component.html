@@ -13,6 +13,7 @@
             />
           </div>
           <mat-icon
+            *ngIf="showActionButtons"
             class="edit-icon"
             aria-label="Edit profile"
             (click)="navigateToMyProfile()"
@@ -61,13 +62,22 @@
           *ngIf="product?.imageIds?.length; else noPhotos"
         >
           <img [src]="selectedImage" alt="Selected Image" />
-          <button mat-icon-button class="delete-button" (click)="deleteImage()">
+          <button
+            *ngIf="showActionButtons"
+            mat-icon-button
+            class="delete-button"
+            (click)="deleteImage()"
+          >
             <mat-icon>delete</mat-icon>
           </button>
         </div>
         <ng-template #noPhotos>
           <div class="main-image main-image-upload">
-            <button mat-icon-button (click)="addImage()">
+            <button
+              *ngIf="showActionButtons"
+              mat-icon-button
+              (click)="addImage()"
+            >
               <mat-icon>add</mat-icon>
             </button>
           </div>
@@ -81,7 +91,12 @@
             [class.selected]="image.imageLink === selectedImage"
             alt="Thumbnail"
           />
-          <button mat-icon-button class="add-button" (click)="addImage()">
+          <button
+            *ngIf="showActionButtons"
+            mat-icon-button
+            class="add-button"
+            (click)="addImage()"
+          >
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -121,6 +136,7 @@
           <strong>Description:</strong> {{ product.description }}
         </p>
         <button
+          *ngIf="showActionButtons"
           mat-raised-button
           color="primary"
           type="submit"
@@ -133,7 +149,7 @@
       <!-- edit product fields  -->
       <div
         style="margin-top: 10px; width: 500px"
-        *ngIf="editMode || !this.productId"
+        *ngIf="(editMode || !this.productId) && showActionButtons"
       >
         <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
           <mat-form-field appearance="fill">
@@ -208,6 +224,7 @@
           </mat-form-field>
 
           <button
+            *ngIf="showActionButtons"
             style="margin-right: 4px"
             mat-raised-button
             color="primary"
@@ -217,7 +234,12 @@
             Submit
           </button>
 
-          <button mat-raised-button color="accent" (click)="editMode = false">
+          <button
+            *ngIf="showActionButtons"
+            mat-raised-button
+            color="accent"
+            (click)="editMode = false"
+          >
             Cancel
           </button>
         </form>

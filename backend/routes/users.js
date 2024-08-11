@@ -1,8 +1,10 @@
 const express = require("express");
 const multer = require("multer");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
+const checkauth = require("../middleware/check-auth");
 
 const router = express.Router();
 
@@ -28,39 +30,44 @@ const storage = multer.diskStorage({
   },
 });
 
-router.put("/:id", multer({ storage }).single("image"), (req, res, next) => {
-  let profilePicture = req.body.profilePicture;
+router.put(
+  "/:id",
+  checkauth,
+  multer({ storage }).single("image"),
+  (req, res, next) => {
+    let profilePicture = req.body.profilePicture;
 
-  // If a new image is uploaded, update the profile picture URL
-  if (req.file) {
-    const url = req.protocol + "://" + req.get("host");
-    profilePicture = url + "/images/" + req.file.filename;
-  }
+    // If a new image is uploaded, update the profile picture URL
+    if (req.file) {
+      const url = req.protocol + "://" + req.get("host");
+      profilePicture = url + "/images/" + req.file.filename;
+    }
 
-  const updatedUser = {
-    ...req.body,
-    profilePicture: profilePicture,
-  };
+    const updatedUser = {
+      ...req.body,
+      profilePicture: profilePicture,
+    };
 
-  User.updateOne({ _id: req.params.id }, updatedUser)
-    .then((result) => {
-      if (result.matchedCount > 0) {
-        if (result.modifiedCount > 0) {
-          res.status(200).json({ message: "User updated successfully!" });
+    User.updateOne({ _id: req.params.id }, updatedUser)
+      .then((result) => {
+        if (result.matchedCount > 0) {
+          if (result.modifiedCount > 0) {
+            res.status(200).json({ message: "User updated successfully!" });
+          } else {
+            res.status(200).json({ message: "No changes made to the user!" });
+          }
         } else {
-          res.status(200).json({ message: "No changes made to the user!" });
+          res.status(404).json({ message: "User not found!" });
         }
-      } else {
-        res.status(404).json({ message: "User not found!" });
-      }
-    })
-    .catch((error) => {
-      res.status(500).json({
-        message: "Couldn't update user!",
-        error: error,
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message: "Couldn't update user!",
+          error: error,
+        });
       });
-    });
-});
+  }
+);
 
 router.get("/:id", (req, res, next) => {
   User.findById(req.params.id)
@@ -106,5 +113,41 @@ router.post(
       });
   }
 );
+
+router.post("/login", (req, res, next) => {
+  let fetchedUser;
+  User.findOne({ mail: req.body.email })
+    .then((user) => {
+      if (!user) {
+        return res.status(401).json({
+          message: "Auth failed",
+        });
+      }
+      fetchedUser = user;
+      return bcrypt.compare(req.body.password, user.password);
+    })
+    .then((result) => {
+      if (!result) {
+        return res.status(401).json({
+          message: "Auth failed",
+        });
+      }
+      const token = jwt.sign(
+        { mail: fetchedUser.mail, userId: fetchedUser._id },
+        "here_is_temporary_secret",
+        { expiresIn: "1h" }
+      );
+      res.status(200).json({
+        token: token,
+        expiresIn: 3600,
+        userId: fetchedUser._id,
+      });
+    })
+    .catch((err) => {
+      return res.status(401).json({
+        message: "Invalid authentication credentials!",
+      });
+    });
+});
 
 module.exports = router;

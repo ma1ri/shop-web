@@ -6,6 +6,7 @@ const User = require("../models/user");
 const Category = require("../models/category");
 const Brand = require("../models/brand");
 const Image = require("../models/image");
+const checkauth = require("../middleware/check-auth");
 
 const router = express.Router();
 
@@ -32,7 +33,7 @@ const storage = multer.diskStorage({
 });
 
 //create new product
-router.post("", async (req, res, next) => {
+router.post("", checkauth, async (req, res, next) => {
   try {
     const { userId, categoryId, brandId } = req.body;
     //check if userid exists
@@ -63,7 +64,7 @@ router.post("", async (req, res, next) => {
 });
 
 //update product
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", checkauth, async (req, res, next) => {
   try {
     const productId = req.params.id;
     const { userId, categoryId, brandId } = req.body;
@@ -158,6 +159,7 @@ router.get("/search", async (req, res) => {
 
 router.post(
   "/:productId/upload",
+  checkauth,
   multer({ storage }).array("image", 2),
   async (req, res, next) => {
     try {

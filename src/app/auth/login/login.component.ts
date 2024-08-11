@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -8,6 +9,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class LoginComponent {
   loginForm!: FormGroup;
+
+  constructor(private authService: AuthService) {}
 
   ngOnInit() {
     this.loginForm = new FormGroup({
@@ -22,6 +25,9 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       console.log(this.loginForm.value);
+      this.authService
+        .login(this.loginForm.value)
+        .subscribe((res) => console.log(res));
     } else {
       console.log('Form is invalid');
     }

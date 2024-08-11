@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Brand } from 'src/app/shared/models/brand.model';
@@ -6,13 +6,15 @@ import { Category } from 'src/app/shared/models/category.model';
 import { ProductsService } from '../product.service';
 import { Product } from 'src/app/shared/models/product.model';
 import { User } from 'src/app/shared/models/user.model';
+import { AuthService } from 'src/app/auth/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product-details',
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss'],
 })
-export class ProductDetailsComponent implements OnInit {
+export class ProductDetailsComponent implements OnInit, OnDestroy {
   productForm!: FormGroup;
   productId!: string;
   categories: Category[] = [];
@@ -22,29 +24,49 @@ export class ProductDetailsComponent implements OnInit {
   user!: User;
 
   selectedImage!: string;
+  authServiceSubscription!: Subscription;
+  queryParamsSubscription!: Subscription;
+
+  isAuthenticated: boolean = false;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private productsService: ProductsService
+    private productsService: ProductsService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.initForm();
-    this.route.queryParams.subscribe((params) => {
-      this.fetchFillterFields();
-      this.productId = params['productId'];
-      console.log(this.productId);
-      if (this.productId) {
-        this.productsService.getProductById(this.productId).subscribe((res) => {
-          this.product = res;
-          this.user = this.product.userId;
-          this.selectedImage = this.product?.imageIds?.length
-            ? this.product.imageIds[0].imageLink
-            : '';
-        });
+    this.authServiceSubscription = this.authService
+      .getAuthStatusListener()
+      .subscribe((res) => {
+        console.log('authenticated', res);
+        this.isAuthenticated = res;
+      });
+    this.queryParamsSubscription = this.route.queryParams.subscribe(
+      (params) => {
+        this.fetchFillterFields();
+        this.productId = params['productId'];
+        console.log(this.productId);
+        if (this.productId) {
+          this.productsService
+            .getProductById(this.productId)
+            .subscribe((res) => {
+              this.product = res;
+              this.user = this.product.userId;
+              this.selectedImage = this.product?.imageIds?.length
+                ? this.product.imageIds[0].imageLink
+                : '';
+            });
+        }
       }
-    });
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.authServiceSubscription.unsubscribe();
+    this.queryParamsSubscription.unsubscribe();
   }
 
   onSubmit(): void {
@@ -55,7 +77,7 @@ export class ProductDetailsComponent implements OnInit {
 
     const params = {
       ...this.productForm.value,
-      userId: this.product?.userId?._id, // TODO: დაამატე დალოგინებული იუზერის id
+      userId: this.product?.userId?._id || this.authService.getUserId(),
     };
     if (!this.productId) {
       this.productsService.createProduct(params).subscribe((res) => {
@@ -74,6 +96,17 @@ export class ProductDetailsComponent implements OnInit {
         this.product = res;
         this.editMode = false;
       });
+  }
+
+  get showActionButtons() {
+    if (!this.productId) {
+      return this.isAuthenticated;
+    }
+    return (
+      this.isAuthenticated &&
+      this.product?.userId._id &&
+      this.authService.getUserId() === this.product?.userId._id
+    );
   }
 
   selectImage(image: string): void {

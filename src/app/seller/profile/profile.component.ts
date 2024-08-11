@@ -80,7 +80,6 @@ export class ProfileComponent implements OnInit {
       (params) => {
         this.userId = params['userId'];
         console.log('Current User id', this.userId);
-        this.isAuthenticated = this.authService.isAuthenticated();
       }
     );
   }

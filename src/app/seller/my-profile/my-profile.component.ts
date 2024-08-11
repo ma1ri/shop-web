@@ -23,37 +23,32 @@ export class MyProfileComponent {
   ) {}
 
   ngOnInit(): void {
-    this.queryParamsSubscription = this.route.queryParams.subscribe(
-      (params) => {
-        this.userId = params['userId'];
-        console.log('Current User id', this.userId);
-        this.isAuthenticated = this.authService.isAuthenticated();
-        if (this.userId) {
-          this.authService.getUserDetails(this.userId).subscribe((res) => {
-            this.currentDetails = res;
-            this.signUpForm = new FormGroup({
-              name: new FormControl(res.name, [Validators.required]),
-              lastName: new FormControl(res.lastName, [Validators.required]),
-              phone: new FormControl(res.phone, [
-                Validators.required,
-                Validators.pattern('^(\\d{3}-\\d{2}-\\d{2}-\\d{2}|\\d{9})$'),
-              ]),
-              mail: new FormControl(res.mail, [
-                Validators.required,
-                Validators.email,
-              ]),
-              facebook: new FormControl(res.facebook, [
-                Validators.pattern('https?://(www.)?facebook.com/.+'),
-              ]),
-              instagram: new FormControl(res.instagram, [
-                Validators.pattern('https?://(www.)?instagram.com/.+'),
-              ]),
-            });
-            this.signUpForm.disable();
-          });
-        }
-      }
-    );
+    this.userId = this.authService.getUserId() || '';
+    console.log('Current User id', this.userId);
+    if (this.userId) {
+      this.authService.getUserDetails(this.userId).subscribe((res) => {
+        this.currentDetails = res;
+        this.signUpForm = new FormGroup({
+          name: new FormControl(res.name, [Validators.required]),
+          lastName: new FormControl(res.lastName, [Validators.required]),
+          phone: new FormControl(res.phone, [
+            Validators.required,
+            Validators.pattern('^(\\d{3}-\\d{2}-\\d{2}-\\d{2}|\\d{9})$'),
+          ]),
+          mail: new FormControl(res.mail, [
+            Validators.required,
+            Validators.email,
+          ]),
+          facebook: new FormControl(res.facebook, [
+            Validators.pattern('https?://(www.)?facebook.com/.+'),
+          ]),
+          instagram: new FormControl(res.instagram, [
+            Validators.pattern('https?://(www.)?instagram.com/.+'),
+          ]),
+        });
+        this.signUpForm.disable();
+      });
+    }
   }
 
   onSave() {
@@ -70,7 +65,6 @@ export class MyProfileComponent {
   }
 
   onCancel() {
-    this.signUpForm.reset();
     this.signUpForm.disable();
   }
 }
