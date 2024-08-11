@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -8,6 +10,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class SignupComponent {
   signUpForm!: FormGroup;
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
     this.signUpForm = new FormGroup({
@@ -34,6 +38,11 @@ export class SignupComponent {
   onSubmit() {
     if (this.signUpForm.valid) {
       console.log(this.signUpForm.value);
+      this.authService.signup(this.signUpForm.value).subscribe((res) => {
+        this.router.navigate(['/seller/my-profile'], {
+          queryParams: { userId: res._id },
+        });
+      });
     } else {
       console.log('Form is invalid');
       console.log(this.signUpForm.value);

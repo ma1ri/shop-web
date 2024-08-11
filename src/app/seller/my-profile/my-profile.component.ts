@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
+import { User } from 'src/app/shared/models/user.model';
 
 @Component({
   selector: 'app-my-profile',
@@ -11,6 +12,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 })
 export class MyProfileComponent {
   signUpForm!: FormGroup;
+  currentDetails!: User;
 
   isAuthenticated = false;
   userId!: string;
@@ -26,33 +28,41 @@ export class MyProfileComponent {
         this.userId = params['userId'];
         console.log('Current User id', this.userId);
         this.isAuthenticated = this.authService.isAuthenticated();
+        if (this.userId) {
+          this.authService.getUserDetails(this.userId).subscribe((res) => {
+            this.currentDetails = res;
+            this.signUpForm = new FormGroup({
+              name: new FormControl(res.name, [Validators.required]),
+              lastName: new FormControl(res.lastName, [Validators.required]),
+              phone: new FormControl(res.phone, [
+                Validators.required,
+                Validators.pattern('^(\\d{3}-\\d{2}-\\d{2}-\\d{2}|\\d{9})$'),
+              ]),
+              mail: new FormControl(res.mail, [
+                Validators.required,
+                Validators.email,
+              ]),
+              facebook: new FormControl(res.facebook, [
+                Validators.pattern('https?://(www.)?facebook.com/.+'),
+              ]),
+              instagram: new FormControl(res.instagram, [
+                Validators.pattern('https?://(www.)?instagram.com/.+'),
+              ]),
+            });
+            this.signUpForm.disable();
+          });
+        }
       }
     );
-
-    this.signUpForm = new FormGroup({
-      name: new FormControl('', [Validators.required]),
-      lastName: new FormControl('', [Validators.required]),
-      password: new FormControl('', [
-        Validators.required,
-        Validators.minLength(6),
-      ]),
-      phone: new FormControl('', [
-        Validators.required,
-        Validators.pattern('^(\\d{3}-\\d{2}-\\d{2}-\\d{2}|\\d{9})$'),
-      ]),
-      mail: new FormControl('', [Validators.required, Validators.email]),
-      facebook: new FormControl('', [
-        Validators.pattern('https?://(www.)?facebook.com/.+'),
-      ]),
-      instagram: new FormControl('', [
-        Validators.pattern('https?://(www.)?instagram.com/.+'),
-      ]),
-    });
   }
 
   onSave() {
     if (this.signUpForm.valid) {
-      console.log(this.signUpForm.value);
+      this.authService
+        .updateUser(this.userId, this.signUpForm.value)
+        .subscribe((res) => {
+          this.signUpForm.disable();
+        });
     } else {
       console.log('Form is invalid');
       console.log(this.signUpForm.value);

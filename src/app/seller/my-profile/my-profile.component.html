@@ -10,7 +10,7 @@
         <a href="#" class="change-photo-link">Change profile photo</a>
       </div>
 
-      <div class="profile-info-section">
+      <div class="profile-info-section" *ngIf="signUpForm">
         <form [formGroup]="signUpForm">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Name</mat-label>
@@ -25,24 +25,6 @@
             <input matInput formControlName="lastName" required />
             <mat-error *ngIf="signUpForm.get('lastName')?.hasError('required')">
               გთხოვთ, შეავსოთ
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Password</mat-label>
-            <input
-              matInput
-              formControlName="password"
-              type="password"
-              required
-            />
-            <mat-error *ngIf="signUpForm.get('password')?.hasError('required')">
-              გთხოვთ, შეავსოთ
-            </mat-error>
-            <mat-error
-              *ngIf="signUpForm.get('password')?.hasError('minlength')"
-            >
-              პაროლის სიგრძე უნდა იყოს მინიმუმ 6 სიმბოლო
             </mat-error>
           </mat-form-field>
 

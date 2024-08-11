@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require("multer");
+const bcrypt = require("bcrypt");
 
 const User = require("../models/user");
 
@@ -27,20 +28,6 @@ const storage = multer.diskStorage({
   },
 });
 
-//create new user
-router.post("", multer({ storage }).single("image"), (req, res, next) => {
-  const url = req.protocol + "://" + req.get("host");
-  const post = new User({
-    name: req.body.name,
-    profilePicture: req.file ? url + "/images/" + req.file.filename : null,
-  });
-  console.log(post);
-  post.save();
-  res.status(201).json({
-    message: "created",
-  });
-});
-
 router.put("/:id", multer({ storage }).single("image"), (req, res, next) => {
   let profilePicture = req.body.profilePicture;
 
@@ -55,11 +42,14 @@ router.put("/:id", multer({ storage }).single("image"), (req, res, next) => {
     profilePicture: profilePicture,
   };
 
-  // Find the user by ID and update their details
   User.updateOne({ _id: req.params.id }, updatedUser)
     .then((result) => {
       if (result.matchedCount > 0) {
-        res.status(200).json({ message: "Update successful!" });
+        if (result.modifiedCount > 0) {
+          res.status(200).json({ message: "User updated successfully!" });
+        } else {
+          res.status(200).json({ message: "No changes made to the user!" });
+        }
       } else {
         res.status(404).json({ message: "User not found!" });
       }
@@ -72,19 +62,49 @@ router.put("/:id", multer({ storage }).single("image"), (req, res, next) => {
     });
 });
 
-router.get("", (req, res, next) => {
-  //   User.find(() => {});
-  User.find()
+router.get("/:id", (req, res, next) => {
+  User.findById(req.params.id)
+    .select("-password")
     .then((documents) => {
-      console.log(documents);
-      res.status(200).json({
-        message: "successfully fetched data",
-        data: {
-          users: documents,
-        },
-      });
+      res.status(200).json(documents);
     })
-    .catch();
+    .catch((err) => res.status(404).json({ message: "User not found!" }));
 });
+
+//create new user
+router.post(
+  "/signup",
+  multer({ storage }).single("image"),
+  (req, res, next) => {
+    const url = req.protocol + "://" + req.get("host");
+    bcrypt
+      .hash(req.body.password, 10)
+      .then((hashedPassword) => {
+        const post = new User({
+          name: req.body.name,
+          password: hashedPassword,
+          lastName: req.body.lastName,
+          phone: req.body.phone,
+          mail: req.body.mail,
+          facebook: req.body.facebook,
+          instagram: req.body.instagram,
+          profilePicture: req.file
+            ? url + "/images/" + req.file.filename
+            : null,
+        });
+        post
+          .save()
+          .then((newUser) => {
+            res.status(201).json(newUser);
+          })
+          .catch((err) => {
+            res.status(500).json({ error: err });
+          });
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err });
+      });
+  }
+);
 
 module.exports = router;

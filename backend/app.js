@@ -13,7 +13,7 @@ const app = express();
 
 mongoose
   .connect(
-    "mongodb+srv://mar:MvQALjxi5Cpsy02i@cluster0.aoufh.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0"
+    "mongodb+srv://mar:MvQALjxi5Cpsy02i@cluster0.aoufh.mongodb.net/shop?w=majority&appName=Cluster0"
   )
   .then(() => console.log("Connected to Database"))
   .catch(() => console.log("Connection Failed"));
