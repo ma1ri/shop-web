@@ -15,6 +15,7 @@ export class AuthService {
   private tokenTimer: any;
   private userId!: string | null;
   private authStatusListener = new BehaviorSubject<boolean>(this.authenticated);
+  isLoading = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient, private router: Router) {}
 
