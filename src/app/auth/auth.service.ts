@@ -77,7 +77,7 @@ export class AuthService {
       );
   }
 
-  updateUser(userId: string, user: User) {
+  updateUser(userId: string, user: User | FormData) {
     return this.http.put<User>(this.apiUrl + '/' + userId, user);
   }
 

@@ -15,6 +15,8 @@ export class MyProfileComponent {
   currentDetails!: User;
 
   isAuthenticated = false;
+  uploadedImage!: string;
+  notValidMimeType = false;
   userId!: string;
   private queryParamsSubscription!: Subscription;
   constructor(
@@ -62,6 +64,36 @@ export class MyProfileComponent {
       console.log('Form is invalid');
       console.log(this.signUpForm.value);
     }
+  }
+
+  onImagePicked(event: Event) {
+    this.notValidMimeType = false;
+    const ev = event.target as HTMLInputElement;
+    const file = ev?.files ? ev.files[0] : null;
+    if (!file) return;
+
+    const allowedMimeTypes = [
+      'image/png',
+      'image/jpeg',
+      'image/jpg',
+      'image/gif',
+    ];
+    if (!allowedMimeTypes.includes(file.type)) {
+      this.notValidMimeType = true;
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.uploadedImage = reader.result as string;
+      const formData = new FormData();
+      formData.append('image', file, file.name);
+      this.authService
+        .updateUser(this.userId, formData)
+        .subscribe((response) => {
+          console.log(response);
+        });
+    };
+    reader.readAsDataURL(file);
   }
 
   onCancel() {

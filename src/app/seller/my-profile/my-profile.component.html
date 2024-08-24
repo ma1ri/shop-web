@@ -3,11 +3,31 @@
     <div class="profile-form-container">
       <div class="profile-avatar-section">
         <img
-          src="https://via.placeholder.com/150"
+          [src]="
+            uploadedImage ||
+            currentDetails.profilePicture ||
+            'https://via.placeholder.com/150'
+          "
           alt="Profile Photo"
           class="profile-avatar"
         />
-        <a href="#" class="change-photo-link">Change profile photo</a>
+        <a
+          href="#"
+          class="change-photo-link"
+          (click)="$event.preventDefault(); filePicker.click()"
+          >Change profile photo</a
+        >
+        <div>
+          <input
+            type="file"
+            #filePicker
+            style="visibility: hidden"
+            (change)="onImagePicked($event)"
+          />
+        </div>
+        <mat-error *ngIf="notValidMimeType">
+          გთხოვთ, აირჩიოთ სწორი ფორმატის ფოტო
+        </mat-error>
       </div>
 
       <div class="profile-info-section" *ngIf="signUpForm">
