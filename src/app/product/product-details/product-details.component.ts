@@ -8,6 +8,7 @@ import { Product } from 'src/app/shared/models/product.model';
 import { User } from 'src/app/shared/models/user.model';
 import { AuthService } from 'src/app/auth/auth.service';
 import { Subscription } from 'rxjs';
+import { response } from 'express';
 
 @Component({
   selector: 'app-product-details',
@@ -21,6 +22,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
   brands: Brand[] = [];
   product!: Product | undefined;
   editMode: boolean = false;
+  notValidMimeType = false;
   user!: User;
 
   selectedImage!: string;
@@ -48,7 +50,6 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
       (params) => {
         this.fetchFillterFields();
         this.productId = params['productId'];
-        console.log(this.productId);
         if (this.productId) {
           this.productsService
             .getProductById(this.productId)
@@ -115,7 +116,39 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 
   deleteImage() {}
 
-  addImage() {}
+  addImage(event: Event) {
+    this.notValidMimeType = false;
+    const ev = event.target as HTMLInputElement;
+    const file = ev?.files ? ev.files[0] : null;
+    if (!file) return;
+
+    const allowedMimeTypes = [
+      'image/png',
+      'image/jpeg',
+      'image/jpg',
+      'image/gif',
+    ];
+    if (!allowedMimeTypes.includes(file.type)) {
+      this.notValidMimeType = true;
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      // this.uploadedImage = reader.result as string;
+      const formData = new FormData();
+      formData.append('image', file, file.name);
+      this.productsService
+        .uploadPicture(this.productId, formData)
+        .subscribe((response) => {
+          this.product = response;
+          this.user = response.userId;
+          this.selectedImage = this.product?.imageIds?.length
+            ? this.product.imageIds[0].imageLink
+            : '';
+        });
+    };
+    reader.readAsDataURL(file);
+  }
 
   navigateToMyProfile() {
     this.router.navigate(['seller/my-profile']).then();

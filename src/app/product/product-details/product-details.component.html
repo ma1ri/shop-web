@@ -76,10 +76,16 @@
             <button
               *ngIf="showActionButtons"
               mat-icon-button
-              (click)="addImage()"
+              (click)="filePicker.click()"
             >
               <mat-icon>add</mat-icon>
             </button>
+            <input
+              type="file"
+              #filePicker
+              style="visibility: hidden"
+              (change)="addImage($event)"
+            />
           </div>
         </ng-template>
 
@@ -95,9 +101,15 @@
             *ngIf="showActionButtons"
             mat-icon-button
             class="add-button"
-            (click)="addImage()"
+            (click)="filePicker.click()"
           >
             <mat-icon>add</mat-icon>
+            <input
+              type="file"
+              #filePicker
+              style="visibility: hidden"
+              (change)="addImage($event)"
+            />
           </button>
         </div>
       </div>

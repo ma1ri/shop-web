@@ -196,9 +196,7 @@ router.post(
         return res.status(404).json({ error: "Product not found." });
       }
 
-      res.status(201).json({
-        product: createdProduct,
-      });
+      res.status(201).json(createdProduct);
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
