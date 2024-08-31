@@ -129,6 +129,10 @@ router.get("/search", async (req, res) => {
       queryParams.brandId = req.query.brandId;
     }
 
+    if (req.query.userId) {
+      queryParams.userId = req.query.userId;
+    }
+
     if (req.query.onSale) {
       queryParams.onSale = req.query.onSale === "true";
     }

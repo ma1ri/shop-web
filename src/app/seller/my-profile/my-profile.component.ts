@@ -12,7 +12,7 @@ import { User } from 'src/app/shared/models/user.model';
 })
 export class MyProfileComponent {
   signUpForm!: FormGroup;
-  currentDetails!: User;
+  currentDetails!: User | null;
 
   isAuthenticated = false;
   uploadedImage!: string;

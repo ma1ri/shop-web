@@ -19,6 +19,9 @@
             (click)="navigateToMyProfile()"
             >edit</mat-icon
           >
+          <mat-icon class="view-icon" (click)="navigateToUserProducts()"
+            >visibility</mat-icon
+          >
         </mat-card-header>
         <mat-card-content>
           <h3 class="profile-name">{{ user.name }}</h3>
@@ -56,7 +59,7 @@
     </div>
 
     <div style="display: flex; flex-direction: column" class="product-details">
-      <div class="image-previewer">
+      <div class="image-previewer" *ngIf="productId">
         <div
           class="main-image"
           *ngIf="product?.imageIds?.length; else noPhotos"

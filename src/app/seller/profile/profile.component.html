@@ -4,7 +4,7 @@
   <div class="layout-container">
     <!-- Profile Card -->
     <div class="profile-container">
-      <mat-card class="profile-card">
+      <mat-card class="profile-card" *ngIf="user">
         <mat-card-header>
           <div mat-card-avatar class="profile-image">
             <img
@@ -14,6 +14,7 @@
             />
           </div>
           <mat-icon
+            *ngIf="authService.getUserId() === userId"
             class="edit-icon"
             aria-label="Edit profile"
             (click)="navigateToMyProfile()"
@@ -24,6 +25,7 @@
           <h2 class="profile-name">{{ user.name }}</h2>
           <p class="profile-details">
             <a
+              *ngIf="user.facebook"
               [href]="user.facebook"
               target="_blank"
               rel="noopener noreferrer"
@@ -34,6 +36,7 @@
               >
             </a>
             <a
+              *ngIf="user.instagram"
               [href]="user.instagram"
               target="_blank"
               rel="noopener noreferrer"
@@ -41,11 +44,11 @@
               <i class="fab fa-instagram" aria-label="Instagram profile"></i>
             </a>
           </p>
-          <p class="profile-details">
+          <p class="profile-details" *ngIf="user.phone">
             <mat-icon aria-label="Phone number">phone</mat-icon>
             {{ user.phone }}
           </p>
-          <p class="profile-details">
+          <p class="profile-details" *ngIf="user.mail">
             <mat-icon aria-label="Email address">email</mat-icon>
             {{ user.mail }}
           </p>
@@ -56,10 +59,16 @@
     <!-- Product Cards Container -->
     <div class="products-container">
       <div class="scrollable-content">
-        <!-- <app-product-card
-          *ngFor="let item of product"
-          [product]="item"
-        ></app-product-card> -->
+        <div *ngIf="products?.length === 0" class="no-products">
+          <p>No products found</p>
+        </div>
+        <div
+          *ngFor="let product of products"
+          class="product-card"
+          (click)="navigateToProduct(product)"
+        >
+          <app-product-card [product]="product"></app-product-card>
+        </div>
       </div>
     </div>
   </div>

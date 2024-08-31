@@ -5,7 +5,7 @@
         <img
           [src]="
             uploadedImage ||
-            currentDetails.profilePicture ||
+            currentDetails?.profilePicture ||
             'https://via.placeholder.com/150'
           "
           alt="Profile Photo"

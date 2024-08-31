@@ -154,6 +154,14 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
     this.router.navigate(['seller/my-profile']).then();
   }
 
+  navigateToUserProducts() {
+    this.router
+      .navigate(['seller/profile'], {
+        queryParams: { userId: this.product?.userId?._id },
+      })
+      .then();
+  }
+
   onEdit() {
     this.editMode = true;
     const paramsForForm = {
