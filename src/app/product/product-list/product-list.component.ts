@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Brand } from 'src/app/shared/models/brand.model';
 import { Category } from 'src/app/shared/models/category.model';
 import { Product } from 'src/app/shared/models/product.model';
@@ -21,6 +21,9 @@ export class ProductListComponent {
     maxPrice: 1000,
     productName: '',
   };
+  currentPage = 1;
+  isLoading = false;
+  hasMoreProducts = true;
 
   private timeoutId: any;
 
@@ -29,18 +32,43 @@ export class ProductListComponent {
     private productsService: ProductsService
   ) {}
 
+  @HostListener('window:scroll', ['$event'])
+  onScroll(event: any) {
+    const pos =
+      (document.documentElement.scrollTop || document.body.scrollTop) +
+      document.documentElement.offsetHeight;
+    const max = document.documentElement.scrollHeight;
+
+    if (pos >= max) {
+      const params = {
+        categoryId: this.filters.category,
+        brandId: this.filters.brand,
+        minPrice: this.filters.minPrice.toString(),
+        maxPrice: this.filters.maxPrice.toString(),
+        productName: this.filters.productName,
+        currentPage: this.currentPage,
+      };
+      this.fetchProducts(params);
+    }
+  }
+
   ngOnInit(): void {
     this.fetchProducts();
     this.fetchFillterFields();
   }
 
   applyFilters(): void {
+    this.currentPage = 1;
+    this.isLoading = false;
+    this.hasMoreProducts = true;
+    this.products = [];
     const params = {
       categoryId: this.filters.category,
       brandId: this.filters.brand,
       minPrice: this.filters.minPrice.toString(),
       maxPrice: this.filters.maxPrice.toString(),
       productName: this.filters.productName,
+      currentPage: this.currentPage,
     };
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
@@ -55,8 +83,13 @@ export class ProductListComponent {
   }
 
   fetchProducts(params = {}): void {
+    if (this.isLoading || !this.hasMoreProducts) return;
+    this.isLoading = true;
     this.productsService.fetchProducts(params).subscribe((data) => {
-      this.products = data;
+      this.products = [...this.products, ...data];
+      this.hasMoreProducts = data.length > 0;
+      this.isLoading = false;
+      this.currentPage++;
     });
   }
 

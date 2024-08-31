@@ -113,7 +113,7 @@ router.put("/:id", checkauth, async (req, res, next) => {
 router.get("/search", async (req, res) => {
   try {
     const queryParams = {};
-    const perPage = parseInt(req.query.perPage) || 10; // Number of results per page
+    const perPage = parseInt(req.query.perPage) || 30; // Number of results per page
     const currentPage = parseInt(req.query.currentPage) || 1; // Current page number
 
     if (req.query.productName) {
@@ -147,13 +147,12 @@ router.get("/search", async (req, res) => {
     }
 
     const products = await Product.find(queryParams)
+      .limit(perPage)
+      .skip((currentPage - 1) * perPage)
       .populate("userId")
       .populate("categoryId")
       .populate("brandId")
       .populate("imageIds");
-    //   .limit(perPage)
-    //   .skip((currentPage - 1) * perPage)
-    //   .sort(sort);
 
     res.status(200).json(products);
   } catch (e) {

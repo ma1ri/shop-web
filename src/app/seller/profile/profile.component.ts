@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
@@ -14,6 +14,9 @@ import { Product } from 'src/app/shared/models/product.model';
 export class ProfileComponent implements OnInit, OnDestroy {
   user!: User;
   products: Product[] = [];
+  currentPage = 1;
+  isLoading = false;
+  hasMoreProducts = true;
 
   isAuthenticated = false;
   userId!: string;
@@ -25,6 +28,18 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private router: Router
   ) {}
 
+  @HostListener('window:scroll', ['$event'])
+  onScroll(event: any) {
+    const pos =
+      (document.documentElement.scrollTop || document.body.scrollTop) +
+      document.documentElement.offsetHeight;
+    const max = document.documentElement.scrollHeight;
+
+    if (pos >= max) {
+      this.fetchProducts();
+    }
+  }
+
   ngOnInit(): void {
     this.queryParamsSubscription = this.route.queryParams.subscribe(
       (params) => {
@@ -33,11 +48,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.authService
             .getUserDetails(this.userId)
             .subscribe((res) => (this.user = res));
-          this.productsService
-            .fetchProducts({ userId: this.userId })
-            .subscribe((res) => {
-              this.products = res;
-            });
+          this.fetchProducts();
         }
         //gaushvi formidan
       }
@@ -46,6 +57,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.queryParamsSubscription.unsubscribe();
+  }
+
+  fetchProducts() {
+    if (this.isLoading || !this.hasMoreProducts) return;
+    this.isLoading = true;
+    this.productsService
+      .fetchProducts({ userId: this.userId, currentPage: this.currentPage })
+      .subscribe((res) => {
+        this.products = [...this.products, ...res];
+        this.hasMoreProducts = res.length > 0;
+        this.isLoading = false;
+        this.currentPage++;
+      });
   }
 
   navigateToProduct(product: Product) {
