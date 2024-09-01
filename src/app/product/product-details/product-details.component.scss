@@ -96,12 +96,19 @@
 
 .view-text {
   cursor: pointer;
-  position: absolute;;
+  position: absolute;
   color: #3f51b5; 
   top: 10px;
-  left: 6px;
+  left: 10px;
   font-weight: 500; 
   font-size: 12px; 
+}
+
+.edit-icon {
+  cursor: pointer;
+  position: absolute;
+  top: 6px;
+  right: 10px;
 }
 
 .view-text:hover {
