@@ -76,6 +76,17 @@ export class ProductListComponent {
     this.timeoutId = setTimeout(() => this.fetchProducts(params), 300);
   }
 
+  clearFilters() {
+    this.filters = {
+      category: '',
+      brand: '',
+      minPrice: 0,
+      maxPrice: 1000,
+      productName: '',
+    };
+    this.applyFilters();
+  }
+
   navigateToProduct(product: Product) {
     this.router.navigate(['/product/product-details'], {
       queryParams: { productId: product._id },
