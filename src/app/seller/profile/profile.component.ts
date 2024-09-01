@@ -48,6 +48,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.authService
             .getUserDetails(this.userId)
             .subscribe((res) => (this.user = res));
+          this.products = [];
+          this.currentPage = 1;
+          this.isLoading = false;
+          this.hasMoreProducts = true;
           this.fetchProducts();
         }
         //gaushvi formidan
@@ -72,10 +76,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
       });
   }
 
-  navigateToProduct(product: Product) {
-    this.router.navigate(['/product/product-details'], {
-      queryParams: { productId: product._id },
-    });
+  navigateToProduct(product: Product | null = null) {
+    let params = {};
+    if (product) {
+      params = {
+        queryParams: { productId: product._id },
+      };
+    }
+    this.router.navigate(['/product/product-details'], params);
   }
 
   navigateToMyProfile() {

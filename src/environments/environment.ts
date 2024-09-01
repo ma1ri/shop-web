@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  url: 'http://localhost:3000/',
+  url: 'http://shop-web2-env.eba-7pspare3.us-east-1.elasticbeanstalk.com/',
 };

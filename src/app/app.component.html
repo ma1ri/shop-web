@@ -18,6 +18,22 @@
           >Signup</a
         >
       </li>
+
+      <li *ngIf="isAuthenticated">
+        <a
+          mat-button
+          routerLink="/seller/my-profile"
+          routerLinkActive="mat-accent"
+          >My Profile</a
+        >
+      </li>
+
+      <li *ngIf="isAuthenticated">
+        <button mat-button (click)="onNavigateToMyProducts()">
+          My products
+        </button>
+      </li>
+
       <li *ngIf="isAuthenticated">
         <button mat-button (click)="onLogout()">Logout</button>
       </li>

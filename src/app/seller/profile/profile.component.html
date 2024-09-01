@@ -52,6 +52,14 @@
             <mat-icon aria-label="Email address">email</mat-icon>
             {{ user.mail }}
           </p>
+          <button
+            *ngIf="authService.getUserId() === userId"
+            mat-raised-button
+            color="primary"
+            (click)="navigateToProduct()"
+          >
+            New Product
+          </button>
         </mat-card-content>
       </mat-card>
     </div>

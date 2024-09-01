@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from './auth/auth.service';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,7 @@ export class AppComponent implements OnInit, OnDestroy {
   authServiceSubscription!: Subscription;
   isAuthenticated: boolean = false;
 
-  constructor(public authService: AuthService) {}
+  constructor(public authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.authService.autoAuthUser();
@@ -23,6 +24,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.authServiceSubscription.unsubscribe();
+  }
+
+  onNavigateToMyProducts() {
+    this.router
+      .navigate(['seller/profile'], {
+        queryParams: { userId: this.authService.getUserId() },
+      })
+      .then();
   }
 
   onLogout() {
