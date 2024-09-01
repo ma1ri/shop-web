@@ -8,6 +8,19 @@
     </span>
     <span class="spacer"></span>
     <ul>
+      <li>
+        <a mat-button routerLink="/product/home" routerLinkActive="mat-accent"
+          >Home</a
+        >
+      </li>
+      <li>
+        <a
+          mat-button
+          routerLink="/product/product-list"
+          routerLinkActive="mat-accent"
+          >All Products</a
+        >
+      </li>
       <li *ngIf="!isAuthenticated">
         <a mat-button routerLink="/auth/login" routerLinkActive="mat-accent"
           >Login</a

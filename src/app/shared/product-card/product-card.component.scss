@@ -9,8 +9,25 @@
     border: 1px solid #e0e0e0;
     transition: box-shadow 0.3s ease, transform 0.3s ease; 
     margin: 0 auto;
+    position: relative;
+  }
+
+  .badge-container {
+    position: absolute;
+    z-index: 1000;
+    top: 10px;
+    left: 10px;
   }
   
+  .sale-badge {
+    font-size: 0.9rem;
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    font-weight: bold;
+    border-radius: 5px;
+  }
+
   .product-card:hover {
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
     transform: translateY(-5px); 

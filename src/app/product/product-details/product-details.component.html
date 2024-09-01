@@ -65,14 +65,14 @@
           *ngIf="product?.imageIds?.length; else noPhotos"
         >
           <img [src]="selectedImage" alt="Selected Image" />
-          <button
+          <!-- <button
             *ngIf="showActionButtons"
             mat-icon-button
             class="delete-button"
             (click)="deleteImage()"
           >
             <mat-icon>delete</mat-icon>
-          </button>
+          </button> -->
         </div>
         <ng-template #noPhotos>
           <div class="main-image main-image-upload">
@@ -86,7 +86,7 @@
             <input
               type="file"
               #filePicker
-              style="visibility: hidden"
+              style="visibility: hidden; width: 1px"
               (change)="addImage($event)"
             />
           </div>

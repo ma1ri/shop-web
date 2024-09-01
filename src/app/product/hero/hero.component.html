@@ -1,0 +1,34 @@
+<div
+  style="
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding-top: 70px;
+  "
+>
+  <div class="hero-section-container">
+    <div class="hero-section-content">
+      <h1>Welcome to Shop Web</h1>
+      <p style="word-break: break-word">
+        აღმოაჩინე ორიგინალი პროდუქცია ხელმისაწვდომ ფასად და ისიამოვნე სასურველი
+        ბრენდების ფართო არჩევანით. გისურვებთ კარგ გამოცდილებას
+      </p>
+      <button mat-raised-button color="primary" routerLink="/products">
+        Shop Now
+      </button>
+    </div>
+  </div>
+  <div class="product-list">
+    <div *ngIf="products.length === 0" class="no-products">
+      <p>No products found</p>
+    </div>
+    <div
+      *ngFor="let product of products"
+      class="product-card"
+      (click)="navigateToProduct(product)"
+    >
+      <app-product-card [product]="product"></app-product-card>
+    </div>
+  </div>
+</div>

@@ -6,9 +6,10 @@ import { SharedModule } from '../shared/shared.module';
 import { AngularMaterialModule } from '../shared/angular-material/angular-material.module';
 import { ProductRoutingModule } from './product-routing.module';
 import { ProductListComponent } from './product-list/product-list.component';
+import { HeroComponent } from './hero/hero.component';
 
 @NgModule({
-  declarations: [ProductDetailsComponent, ProductListComponent],
+  declarations: [ProductDetailsComponent, ProductListComponent, HeroComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

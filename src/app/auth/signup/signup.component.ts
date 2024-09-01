@@ -39,7 +39,7 @@ export class SignupComponent {
     if (this.signUpForm.valid) {
       console.log(this.signUpForm.value);
       this.authService.signup(this.signUpForm.value).subscribe((res) => {
-        this.router.navigate(['/seller/my-profile'], {
+        this.router.navigate(['/auth/login'], {
           queryParams: { userId: res._id },
         });
       });
