@@ -61,4 +61,8 @@ export class HeroComponent implements OnInit {
       queryParams: { productId: product._id },
     });
   }
+
+  navigateToProducts() {
+    this.router.navigate(['/product/product-list']);
+  }
 }
